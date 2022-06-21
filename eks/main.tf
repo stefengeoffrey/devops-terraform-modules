@@ -196,4 +196,36 @@ resource "aws_iam_openid_connect_provider" "main" {
   url             = aws_eks_cluster.eks_cluster.identity[0].oidc[0].issuer
 }
 
+resource "aws_eks_addon" "kube_proxy" {
+  cluster_name      = "${var.cluster_name}-${var.environment}"
+  addon_name        = "kube-proxy"
+  addon_version     = "v1.21.2-eksbuild.2"
+  resolve_conflicts = "OVERWRITE"
+}
+
+resource "aws_eks_addon" "core_dns" {
+  cluster_name      = "${var.cluster_name}-${var.environment}"
+  addon_name        = "coredns"
+  addon_version     = "v1.8.4-eksbuild.1"
+  resolve_conflicts = "OVERWRITE"
+}
+
+resource "null_resource" "merge_kubeconfig" {
+  triggers = {
+    always = timestamp()
+  }
+
+  
+  provisioner "local-exec" {
+    interpreter = ["/bin/bash", "-c"]
+    command = <<EOT
+      set -e
+      echo 'Applying Auth ConfigMap with kubectl...'
+      aws eks wait cluster-active --name '${var.cluster_name}-${var.environment}'
+      aws eks update-kubeconfig --name '${var.cluster_name}-${var.environment}' --alias '${var.cluster_name}-${var.environment}-${var.region}' --region=${var.region}
+    EOT
+  }
+}
+
+
 
