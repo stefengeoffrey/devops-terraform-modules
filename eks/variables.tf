@@ -19,3 +19,5 @@ variable "public_subnets" {
   description = "List of private subnet IDs"
 }
 
+variable "region" {}
+

@@ -215,7 +215,7 @@ resource "null_resource" "merge_kubeconfig" {
     always = timestamp()
   }
 
-  
+
   provisioner "local-exec" {
     interpreter = ["/bin/bash", "-c"]
     command = <<EOT
