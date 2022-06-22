@@ -1,6 +1,7 @@
 
 resource "aws_eks_cluster" "eks_cluster" {
   name     = "${var.cluster_name}-${var.environment}"
+# version  = "1.22.9"
    
   role_arn = aws_iam_role.eks_cluster_role.arn
   enabled_cluster_log_types = ["api", "audit", "authenticator", "controllerManager", "scheduler"]
@@ -210,22 +211,7 @@ resource "aws_eks_addon" "core_dns" {
   resolve_conflicts = "OVERWRITE"
 }
 
-resource "null_resource" "merge_kubeconfig" {
-  triggers = {
-    always = timestamp()
-  }
 
-
-  provisioner "local-exec" {
-    interpreter = ["/bin/bash", "-c"]
-    command = <<EOT
-      set -e
-      echo 'Applying Auth ConfigMap with kubectl...'
-      aws eks wait cluster-active --name '${var.cluster_name}-${var.environment}'
-      aws eks update-kubeconfig --name '${var.cluster_name}-${var.environment}' --alias '${var.cluster_name}-${var.environment}-${var.region}' --region=${var.region}
-    EOT
-  }
-}
 
 
 
