@@ -187,6 +187,26 @@ resource "aws_iam_role_policy_attachment" "AmazonEC2ContainerRegistryReadOnly" {
   role       = aws_iam_role.eks_node_group_role.name
 }
 
+resource "aws_iam_role_policy_attachment" "AWSXRayDaemonWriteAccess" {
+  policy_arn = "arn:aws:iam::aws:policy/AWSXRayDaemonWriteAccess"
+  role       = aws_iam_role.eks_node_group_role.name
+}
+
+resource "aws_iam_role_policy_attachment" "AWSAppMeshEnvoyAccess" {
+  policy_arn = "arn:aws:iam::aws:policy/AWSAppMeshEnvoyAccess"
+  role       = aws_iam_role.eks_node_group_role.name
+}
+
+resource "aws_iam_role_policy_attachment" "AWSCertificateManagerFullAccess" {
+  policy_arn = "arn:aws:iam::aws:policy/AWSCertificateManagerFullAccess"
+  role       = aws_iam_role.eks_node_group_role.name
+}
+
+resource "aws_iam_role_policy_attachment" "AWSAppMeshFullAccess" {
+  policy_arn = "arn:aws:iam::aws:policy/AWSAppMeshFullAccess"
+  role       = aws_iam_role.eks_node_group_role.name
+}
+
 data "tls_certificate" "auth" {
   url = aws_eks_cluster.eks_cluster.identity[0].oidc[0].issuer
 }
